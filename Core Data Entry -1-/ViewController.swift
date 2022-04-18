@@ -31,7 +31,7 @@ class ViewController: UIViewController {
             
         sleep(3)
         
-        veriOkumaSiralama()
+        veriOkumaFiltreleme()
       
         
     }
@@ -82,6 +82,30 @@ class ViewController: UIViewController {
         let sort = NSSortDescriptor(key: #keyPath(Kisiler.kisi_yas), ascending: true)
 
         fetchRequest.sortDescriptors = [sort]
+        
+        do{
+            kisilerListe = try context.fetch(fetchRequest)
+        }
+        catch{
+            print("Hata")
+        }
+        
+        for k in kisilerListe{
+            print("Ad : \(k.kisi_ad!), Yas : \(k.kisi_yas)")
+        }
+    }
+    
+    func veriOkumaFiltreleme(){
+        
+        let fetchRequest:NSFetchRequest<Kisiler> = Kisiler.fetchRequest()
+//
+//        //for age
+//        fetchRequest.predicate = NSPredicate(format: "kisi_yas > %i", 99)
+//        //for multiple asks
+//        fetchRequest.predicate = NSPredicate(format: "kisi_ad == %i and kisi_ad == %@", 99,"YeniAhmet")
+        //for char ask
+        fetchRequest.predicate = NSPredicate(format: "kisi_ad CONTAINS %@","e")
+        
         
         do{
             kisilerListe = try context.fetch(fetchRequest)
