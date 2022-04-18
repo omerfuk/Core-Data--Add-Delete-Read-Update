@@ -6,14 +6,93 @@
 //
 
 import UIKit
+import CoreData
+
+let appDelegate = UIApplication.shared.delegate as! AppDelegate
+
 
 class ViewController: UIViewController {
-
+    
+    let context = appDelegate.persistentContainer.viewContext
+    var kisilerListe = [Kisiler]()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-        // Do any additional setup after loading the view.
+        
+//        //veriKaydi()
+//        veriOkuma()
+//        //veriSil()
+//        //veriOkuma()
+//        veriGuncelle()
+//        veriOkuma()
+//
+        
+        veriOkuma()
+            
+        sleep(3)
+        
+        veriOkumaSiralama()
+      
+        
     }
 
+    func veriKaydi(){
+        
+        let kisi = Kisiler(context: context)
+        kisi.kisi_ad = "berke"
+        kisi.kisi_yas = 31
+        
+        appDelegate.saveContext()
+        
+        
+    }
+    
+    func veriOkuma(){
+        do{
+            kisilerListe = try context.fetch(Kisiler.fetchRequest())
+        }
+        catch{
+            print("Hata")
+        }
+        
+        for k in kisilerListe{
+            print("Ad : \(k.kisi_ad!), Yas : \(k.kisi_yas)")
+        }
+    }
+    
+    func veriSil(){
+        
+        let kisi = kisilerListe[1]
+        
+        self.context.delete(kisi)
+        appDelegate.saveContext()
+    }
+    
+    func veriGuncelle(){
+        let kisi = kisilerListe[0]
+        kisi.kisi_ad = "YeniAhmet"
+        kisi.kisi_yas = 99
+        appDelegate.saveContext()
+    }
+    
+    func veriOkumaSiralama(){
+        
+        let fetchRequest:NSFetchRequest<Kisiler> = Kisiler.fetchRequest()
+        
+        let sort = NSSortDescriptor(key: #keyPath(Kisiler.kisi_yas), ascending: true)
 
+        fetchRequest.sortDescriptors = [sort]
+        
+        do{
+            kisilerListe = try context.fetch(fetchRequest)
+        }
+        catch{
+            print("Hata")
+        }
+        
+        for k in kisilerListe{
+            print("Ad : \(k.kisi_ad!), Yas : \(k.kisi_yas)")
+        }
+    }
 }
 
